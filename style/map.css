@@ -117,7 +117,7 @@
 
 #infoBox .infoBoxIcon {
     width:30px;
-    vertical-align: bottom;
+    vertical-align: middle;
 }
 
 #infoBox #btnCount {
@@ -138,11 +138,18 @@
     display: none;
   } */
   #infoBox {
-    top: 30px;
+    top: auto;
+    bottom: 0;
+    position: absolute;
+    padding: 0;
     left: 0;
-    margin: auto;
-    width: 90%;
+    margin: 0;
+    width: 100%;
     right: 0;
+  }
+
+  #btnCount {
+    display: none;
   }
 
   #infoBox h2 {
@@ -151,7 +158,7 @@
   }
 
   #infoBox .note {
-      margin-top:10px;
+      margin-top:15px;
   }
 
   #contentBox p {
