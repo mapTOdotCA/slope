@@ -1,0 +1,164 @@
+#mapWrap {
+    position: relative;
+    height: 100vh;
+    width: 100vw;
+    padding:0;
+    margin:0;
+    overflow: none;
+}
+
+#map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+}
+
+#addInfoBox {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1000;
+    display: none;
+}
+
+#addInfoBtn {
+    background: #08306b;
+    color:#fff;
+}
+
+.ui.inverted.dimmer {
+    background-color: rgba(255,255,255,.6);
+}
+
+#infoBox {
+    position: relative;
+    z-index:1001;
+    box-sizing: border-box;
+    background:#fff;
+    color:#999;
+    top:20px;
+    left:20px;
+    width:300px;
+    font-size:16px;
+    -webkit-box-shadow: 5px 5px 10px 0px rgba(239,239,239,0.3);
+    -moz-box-shadow: 5px 5px 10px 0px rgba(239,239,239,0.3);
+    box-shadow: 5px 5px 10px 0px rgba(239,239,239,0.3);
+}
+
+#infoBox #closeBtn {
+    position: absolute;
+    top:10px;
+    right:10px;
+}
+
+#infoBox #closeBtn:hover {
+    cursor: pointer;
+}
+
+#infoBox h2 {
+    margin-top:0;
+    max-width:200px;
+    color:#333;
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+#infoBox #staticHead h2 {
+    margin-bottom:10px;
+}
+
+#infoBox #mapLegend {
+    /* text-align: center; */
+    margin: 15px 0 20px;
+}
+
+#infoBox #mapLegend span {
+    display: inline-block;
+    /* font-size: 12px; */
+}
+
+#infoBox #mapLegend .legendColor {
+    background-image: linear-gradient(to right, white , #08306b);
+    height:10px;
+    width:65px;
+    margin: 0 10px;
+}
+
+#infoBox #toggleHold {
+    margin:0;
+}
+
+#infoBox #toggleHold label {
+    color: #999;
+    font-size: 16px;
+}
+
+#infoBox .dropdown {
+    font-weight:bold;
+    color:#555;
+}
+
+#infoBox .ui.buttons {
+    width: 100%;
+}
+
+#infoBox .note {
+    margin-top:20px;
+    margin-bottom: 5px;
+    font-size:12px;
+}
+
+#infoBox .note a{
+    color:#999;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+#infoBox .infoBoxIcon {
+    width:30px;
+    vertical-align: bottom;
+}
+
+#infoBox #btnCount {
+    font-size: 12px;
+    margin: 10px 0 5px;
+}
+
+#infoBox #staticHold {
+    background: #efefef;
+}
+
+#contentBox {
+    padding: 20px;
+}
+
+@media (max-width:650px) {
+  /* .leaflet-right {
+    display: none;
+  } */
+  #infoBox {
+    top: 30px;
+    left: 0;
+    margin: auto;
+    width: 90%;
+    right: 0;
+  }
+
+  #infoBox h2 {
+      /* font-size:18px; */
+      margin-bottom: 5px;
+  }
+
+  #infoBox .note {
+      margin-top:10px;
+  }
+
+  #contentBox p {
+      font-size:16px;
+  }
+
+  #infoBox #staticHead, #infoBox #staticHold {
+      display: none;
+  }
+}

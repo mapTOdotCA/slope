@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Slope</title>
+<meta name="viewport" content="initial-scale=1.0">
+<meta charset="utf-8">
+<script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.js"></script>
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.css" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+<link rel="stylesheet" type="text/css" href="./style/map.css">
+<script
+  src="https://code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+</head>
+<style>
+
+html {
+  padding:0;
+  margin:0;
+}
+
+body {
+  margin:0;
+  padding:0;
+  font-family: sans-serif;
+}
+
+</style>
+<body>
+<div id="mapWrap">
+	<div id="map"></div>
+  <div id="addInfoBox">
+    <button id="addInfoBtn" class="ui button">
+      Info
+    </button>
+  </div>
+	<div id="infoBox">
+		<div id="contentBox">
+      <button id="closeBtn" class="ui icon button">
+        <i class="close icon"></i>
+      </button>
+			<h2>The Best Tobogganing Hills in Toronto<span></span></h2>
+      <p>Click the markers <img class="infoBoxIcon" src="./img/sled_icon.png"> or select 'Next' to see each one.</p>
+      <div id="toggleHold" class="ui checkbox">
+        <input type="checkbox" name="example">
+        <label>Add trees</label>
+      </div>
+      <div id="mapLegend">
+        <span>Less steep</span>
+        <span class="legendColor"></span>
+        <span>More steep</span>
+      </div>
+      <div class="ui buttons">
+        <div class="ui button navigation disabled" id="prevBtn" data-id="0">Prev.</div>
+        <div class="ui button navigation active" id="nextBtn" data-id="0">Next</div>
+      </div>
+      <div id="btnCount"></div>
+      <div id="staticHead"></div>
+      <div id="staticHold"></div>
+			<p class="note">By: <a href="http://www.mapto.ca/" target="_blank">MapTO</a></p>
+      <p style="margin-top:0;" class="note">Data: <a href="https://www.arcgis.com/home/item.html?id=b1ec60624b2f4f67bb9c4fb536e6b2fd" target="_blank">Ontario</a>, <a href="https://open.toronto.ca/dataset/forest-and-land-cover/" target="_blank">Toronto</a>, <a href="https://www.blogto.com/sports_play/2017/02/map-toboggan-hills-toronto/" target="_blank">BlogTO</a></a></p>
+		</div>
+  </div>
+</div>
+
+<script>
+
+let initLoad = true;
+const yourToken = 'pk.eyJ1Ijoid2lsbGlhbS1kYXZpcyIsImEiOiJja2prYmpvMncwM21pMnJtbjg0NnBjbWduIn0.9n0cpRnRO06AI7oydrZjbw';
+const maxBounds = [[-79.91180419921875,43.27520565244535],[-78.826904296875,44.163489328121294]];
+const hills = {
+  "type": "FeatureCollection",
+  "name": "hills_poi",
+  "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+  "features": [
+    { "type": "Feature", "properties": { "Name": "Bickford Park" }, "geometry": { "type": "Point", "coordinates": [ -79.418408, 43.660463, 0.0 ] } },
+    { "type": "Feature", "properties": { "Name": "Trinity Bellwoods Park" }, "geometry": { "type": "Point", "coordinates": [ -79.4140934, 43.647798, 0.0 ] } },
+    { "type": "Feature", "properties": { "Name": "Withrow Park" }, "geometry": { "type": "Point", "coordinates": [ -79.3467181, 43.6738869, 0.0 ] } },
+    { "type": "Feature", "properties": { "Name": "East Lynn Park" }, "geometry": { "type": "Point", "coordinates": [ -79.315742, 43.6841988, 0.0 ] } },
+    { "type": "Feature", "properties": { "Name": "Linus Park" }, "geometry": { "type": "Point", "coordinates": [ -79.3582562, 43.7888259, 0.0 ] } },
+    { "type": "Feature", "properties": { "Name": "L'Amoreaux North Park" }, "geometry": { "type": "Point", "coordinates": [ -79.307824, 43.8121274, 0.0 ] } },
+    { "type": "Feature", "properties": { "Name": "Riverdale Park West" }, "geometry": { "type": "Point", "coordinates": [ -79.3591056, 43.6658415, 0.0 ] } },
+    { "type": "Feature", "properties": { "Name": "Riverdale Park East" }, "geometry": { "type": "Point", "coordinates": [ -79.3561254, 43.6707898, 0.0 ] } },
+    { "type": "Feature", "properties": { "Name": "Donora Park" }, "geometry": { "type": "Point", "coordinates": [ -79.295673, 43.6998674, 0.0 ] } },
+    { "type": "Feature", "properties": { "Name": "Rennie Park" }, "geometry": { "type": "Point", "coordinates": [ -79.4728494, 43.6430778, 0.0 ] } },
+    { "type": "Feature", "properties": { "Name": "Pine Point Arena" }, "geometry": { "type": "Point", "coordinates": [ -79.5427477, 43.7126479, 0.0 ] } },
+    { "type": "Feature", "properties": { "Name": "Cedarvale Park" }, "geometry": { "type": "Point", "coordinates": [ -79.4346845, 43.6956295, 0.0 ] } },
+    { "type": "Feature", "properties": { "Name": "Westlake Memorial Park" }, "geometry": { "type": "Point", "coordinates": [ -79.4869104, 43.6817511, 0.0 ] } },
+    { "type": "Feature", "properties": { "Name": "Snake Hill" }, "geometry": { "type": "Point", "coordinates": [ -79.156505, 43.8118952, 0.0 ] } },
+    { "type": "Feature", "properties": { "Name": "Hoggs Hollow" }, "geometry": { "type": "Point", "coordinates": [ -79.398642, 43.7419701, 0.0 ] } },
+    { "type": "Feature", "properties": { "Name": "Gladhurst Park" }, "geometry": { "type": "Point", "coordinates": [ -79.4950999, 43.6840304, 0.0 ] } },
+    { "type": "Feature", "properties": { "Name": "Eglinton Park" }, "geometry": { "type": "Point", "coordinates": [ -79.404628, 43.7072326, 0.0 ] } },
+    { "type": "Feature", "properties": { "Name": "Leaside High School" }, "geometry": { "type": "Point", "coordinates": [ -79.372426, 43.7111943, 0.0 ] } },
+    { "type": "Feature", "properties": { "Name": "Don Mills Middle School" }, "geometry": { "type": "Point", "coordinates": [ -79.3398686, 43.7363351, 0.0 ] } },
+    { "type": "Feature", "properties": { "Name": "Parkside Drive" }, "geometry": { "type": "Point", "coordinates": [ -79.4569619, 43.6466524, 0.0 ] } },
+    { "type": "Feature", "properties": { "Name": "Milkman's Run" }, "geometry": { "type": "Point", "coordinates": [ -79.3713285, 43.6907947, 0.0 ] } },
+    { "type": "Feature", "properties": { "Name": "Centennial Park" }, "geometry": { "type": "Point", "coordinates": [ -79.5891381, 43.6519906, 0.0 ] } },
+    { "type": "Feature", "properties": { "Name": "Sir Winston Churchill Park" }, "geometry": { "type": "Point", "coordinates": [ -79.4091964, 43.6831174, 0.0 ] } }
+  ]
+}
+
+mapboxgl.accessToken = yourToken;
+var map = new mapboxgl.Map({
+    container: 'map', // container id
+    style: 'mapbox://styles/william-davis/ckld100hs16tw17pmme4rrjl7', // style URL
+    center: [-79.4114268501608, 43.68657350479826], // starting position [lng, lat]
+    bearing: -16.2,
+    minZoom: 10.5,
+    maxZoom: 15,
+    zoom: 12,
+    maxBounds: maxBounds
+});
+
+map.on('load', function () {
+  
+  map.loadImage('./img/sled_icon.png', function (err, image) {
+      if (err) throw err;
+      map.addImage('custom-marker', image);
+
+      // Add a GeoJSON source with 2 points
+      map.addSource('points', {
+          'type': 'geojson',
+          'data': hills
+      });
+
+      // Add a symbol layer
+      map.addLayer({
+          'id': 'points',
+          'type': 'symbol',
+          'source': 'points',
+          'layout': {
+              'icon-image': 'custom-marker',
+              'icon-size': 0.5,
+              'text-field': ['get', 'Name'],
+              'text-font': [
+                  'Open Sans Semibold',
+                  'Arial Unicode MS Bold'
+              ],
+              'text-size': 12,
+              'text-offset': [0, 1.25],
+              'text-anchor': 'top'
+              },
+            'paint': {
+              'text-halo-color': 'rgba(255,255,255,0.7)',
+              'text-halo-width': 2,
+              'text-opacity': ['interpolate', ['linear'], ['zoom'], 11.5, 0, 12, 1]
+            }
+      });
+  });
+
+  map.on('mouseover', 'points', function (e) {
+    generateCircle(e.features[0].geometry.coordinates);
+  });
+
+  map.on('mouseout', 'points', function() {
+    map.setLayoutProperty('circle-outline', 'visibility', 'none');
+  });
+
+  map.on('click', 'points', function(e) {
+    generatePopup(e.features[0].geometry.coordinates, e.features[0].properties.Name);
+    document.getElementById('infoBox').style.display = 'block';
+    document.getElementById('addInfoBox').style.display = 'none';
+  });
+});
+
+function generatePopup(center, feature) {
+
+    let windowWidth = window.innerWidth;
+    let flyPadding;
+    if (windowWidth <= 650) {
+      flyPadding = {top: 200}
+    } else {
+      flyPadding = {left: 300}
+    }
+
+    let imgWidth = 260;
+    let imgHeight = 250;
+
+    let lng = center[0];
+    let lat = center[1];
+
+    map.flyTo({
+      center: center,
+      zoom:15,
+      speed:0.7,
+      padding: flyPadding
+    });
+
+    let url = 'https://api.mapbox.com/styles/v1/william-davis/ckle7iha75j1117myl19n4uyg/static/' + lng + ',' + lat + ',15,-16.2,50/' + imgWidth + 'x' + imgHeight + '?access_token=' + yourToken;
+    const headHold = document.getElementById('staticHead');
+    const imgHold = document.getElementById('staticHold');
+
+    headHold.innerHTML = '';
+    imgHold.innerHTML = '';
+    
+    let h = document.createElement("h2");
+    h.innerHTML = feature;
+    headHold.appendChild(h); 
+ 
+    imgHold.style.height = imgHeight + 'px';
+    imgHold.style.width = imgWidth + 'px';
+
+    let image = new Image();
+    image.src = url;
+    imgHold.appendChild(image);
+}
+
+function generateCircle(point) {
+    let center = [point[0], point[1]];
+    let circle = turf.point(center);
+
+    if (initLoad) {
+        addCircleLayer(circle);
+    } else {
+        updateCircleLayer(circle);
+    }
+}
+
+function addCircleLayer(feature) {
+  initLoad = false;
+
+	map.addSource('circle-source', {
+		'type': 'geojson',
+		'data': feature
+  });
+
+  map.addLayer({
+		'id': 'circle-outline',
+		'type': 'circle',
+		'source': 'circle-source',
+		'sourceLayer': 'circle-layer',
+		'paint': {
+      'circle-radius': 15,
+      'circle-color': 'rgba(255,255,255,0.85)',
+      'circle-stroke-color': '#000',
+      'circle-stroke-width': 1,
+      'circle-opacity': ['interpolate', ['linear'], ['zoom'], 11.5, 0, 12, 1, 15, 0]
+		}
+  });
+  map.moveLayer('points');
+};
+
+function updateCircleLayer(feature, center) {
+  map.setLayoutProperty('circle-outline', 'visibility', 'visible');
+  map.getSource('circle-source').setData(feature);
+}
+
+$('#closeBtn').click(function() {
+  document.getElementById('infoBox').style.display = 'none';
+  document.getElementById('addInfoBox').style.display = 'block';
+});
+
+$('#addInfoBtn').click(function() {
+  document.getElementById('infoBox').style.display = 'block';
+  document.getElementById('addInfoBox').style.display = 'none';
+});
+
+$('.checkbox').click(function() {
+  if ($(this).hasClass('checked')) {
+    map.setLayoutProperty('trees', 'visibility','none');
+    $(this).removeClass('checked');
+  } else {
+    map.setLayoutProperty('trees', 'visibility','visible');
+    map.easeTo({
+      zoom: 15
+    });
+    $(this).addClass('checked');
+  }
+});
+
+$('.navigation').click(function() {
+  $('.navigation').removeClass('active');
+  let btnType = $(this).attr("id");
+  let dataId = $(this).attr("data-id");
+  let dataNum = parseInt(dataId);
+  $(this).addClass('active');
+  $('#btnCount').html((dataNum+1) + '/24');
+  let feature = hills.features[dataId].properties.Name;
+  let coords = hills.features[dataId].geometry.coordinates;
+
+  generateCircle(coords);
+  generatePopup(coords, feature);
+
+  if (dataId >= 0 && dataId < 23) {
+    if (dataId >= 1) {
+      $('#prevBtn').removeClass('disabled');
+    } else {
+      $('#prevBtn').addClass('disabled');
+      $('#nextBtn').addClass('enabled');
+    }
+
+    let lastLoc = dataNum - 1;
+    let newLoc = dataNum + 1;
+  
+    if (btnType === 'nextBtn') {
+      $('#prevBtn').attr("data-id", lastLoc);
+      $('#nextBtn').attr("data-id", newLoc);
+    } else if (btnType === 'prevBtn') {
+      $('#prevBtn').attr("data-id", lastLoc);
+      $('#nextBtn').attr("data-id", newLoc);
+    }
+  };
+});
+
+</script>
+</body>
+</html>
