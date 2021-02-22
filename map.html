@@ -120,8 +120,6 @@ var map = new mapboxgl.Map({
 });
 
 map.on('load', function () {
-
-  console.log('hills', hills);
   
   map.loadImage('./img/sled_icon.png', function (err, image) {
       if (err) throw err;
@@ -141,6 +139,9 @@ map.on('load', function () {
           'layout': {
               'icon-image': 'custom-marker',
               'icon-size': 0.5,
+              'icon-padding': 0,
+              'icon-allow-overlap': true,
+              // 'icon-ignore-placement': true,
               'text-field': ['get', 'Name'],
               'text-font': [
                   'Open Sans Semibold',
@@ -148,12 +149,13 @@ map.on('load', function () {
               ],
               'text-size': 12,
               'text-offset': [0, 1.25],
-              'text-anchor': 'top'
+              'text-anchor': 'top',
+              'text-allow-overlap': [ "step", ["zoom"], true, 11.5, true, 12, false]
               },
             'paint': {
               'text-halo-color': 'rgba(255,255,255,0.7)',
               'text-halo-width': 2,
-              'text-opacity': ['interpolate', ['linear'], ['zoom'], 11.5, 0, 12, 1]
+              'text-opacity': ['interpolate', ['linear'], ['zoom'], 11.8, 0, 12, 1]
             }
       });
   });
