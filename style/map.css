@@ -104,8 +104,8 @@
 }
 
 #infoBox .note {
-    margin-top:20px;
-    margin-bottom: 5px;
+/*    margin-top:20px;
+    margin-bottom: 5px;*/
     font-size:12px;
 }
 
@@ -133,6 +133,14 @@
     padding: 20px;
 }
 
+#contentBox p {
+    line-height: 0.5em;
+}
+
+#contentBox #credits {
+    margin-top:20px;
+}
+
 @media (max-width:650px) {
   /* .leaflet-right {
     display: none;
@@ -157,9 +165,9 @@
       margin-bottom: 5px;
   }
 
-  #infoBox .note {
+/*  #infoBox .note {
       margin-top:15px;
-  }
+  }*/
 
   #contentBox p {
       font-size:16px;
