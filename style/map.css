@@ -64,6 +64,11 @@
     margin-bottom: 5px;
 }
 
+#infoBox h2 a {
+    text-decoration: none;
+    color:#333;
+}
+
 #infoBox #staticHead h2 {
     margin-bottom:10px;
 }
